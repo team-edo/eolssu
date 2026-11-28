@@ -55,7 +55,7 @@ import kotlinx.serialization.json.Json
 /** 서버 주소. 앱은 [Production], 웹은 페이지와 같은 주소를 쓴다. 각 플랫폼 모듈이 등록한다. */
 class ServerAddress(val baseUrl: String) {
     companion object {
-        val Production = ServerAddress("https://k15e102.p.ssafy.io")
+        val Production = ServerAddress("https://eolssu.site")
     }
 }
 

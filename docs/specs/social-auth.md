@@ -28,9 +28,9 @@
 
 | 제공자 | 웹 콜백 계약안 | 서버 설정 |
 | --- | --- | --- |
-| kakao | https://k15e102.p.ssafy.io/auth/oauth/kakao/callback | AUTH_OAUTH_KAKAO_REDIRECT_URIS |
-| google | https://k15e102.p.ssafy.io/auth/oauth/google/callback | AUTH_OAUTH_GOOGLE_REDIRECT_URIS |
-| naver | https://k15e102.p.ssafy.io/auth/oauth/naver/callback | AUTH_OAUTH_NAVER_REDIRECT_URIS |
+| kakao | https://eolssu.site/auth/oauth/kakao/callback | AUTH_OAUTH_KAKAO_REDIRECT_URIS |
+| google | https://eolssu.site/auth/oauth/google/callback | AUTH_OAUTH_GOOGLE_REDIRECT_URIS |
+| naver | https://eolssu.site/auth/oauth/naver/callback | AUTH_OAUTH_NAVER_REDIRECT_URIS |
 
 주소는 제공자 콘솔·start 요청·완료 요청·서버 허용 목록에서 동일해야 한다. /api 콜백이 아니며, 제공자의 GET code/state를 FE가 받아 기존 JSON POST 완료 API를 호출하는 구조다. Nginx의 / 경로 SPA fallback은 있지만 FE의 콜백 처리는 아직 없다.
 
@@ -44,7 +44,7 @@
 
 ### 앱 등록·키 발급 준비
 
-- 서비스 기본 주소: https://k15e102.p.ssafy.io . 실제 앱 이름·소유 계정·관리자·문의/정책 URL은 운영자가 확인한다. 가상 회사명·정책 URL로 등록하지 않는다.
+- 서비스 기본 주소: https://eolssu.site . 실제 앱 이름·소유 계정·관리자·문의/정책 URL은 운영자가 확인한다. 가상 회사명·정책 URL로 등록하지 않는다.
 - Kakao: 개발자 앱에서 REST API 키와 Client secret, 카카오 로그인 활성화·이메일 동의 항목과 위 Redirect URI를 설정한다. [공식 REST 안내](https://developers.kakao.com/docs/ko/kakaologin/rest-api).
 - Google: OAuth 클라이언트 유형은 이 서버 코드 교환 방식에 맞는 Web application으로 준비하고 승인된 redirect URI·동의 화면/테스트 사용자 접근 범위를 확인한다. [공식 서버 앱 안내](https://developers.google.com/identity/protocols/oauth2/web-server).
 - Naver: 네이버 로그인 애플리케이션을 등록하고 서비스 URL·Callback URL·이메일 제공 항목과 Client ID/Secret을 확인한다. [공식 API 안내](https://developers.naver.com/docs/login/api/api.md).
@@ -74,8 +74,8 @@ BE 준비 범위를 먼저 마친 뒤 FE에 전달한다는 사용자 지시에 
 
 ### Android 계약안
 
-- 카카오 App Links: https://k15e102.p.ssafy.io/auth/android/oauth/kakao/callback . 사용자가 BE 기준 주소로 확정했으며 카카오 앱1628175의 REST API 키 설정에 등록 후 재조회했다. 로그인·연결 모두 같은 URI를 사용한다. AUTH_OAUTH_KAKAO_REDIRECT_URIS에 같은 값을 서버 환경 파일로 저장했고 운영 Compose에도 콜백·APK 지문 전달을 추가했다. 새 코드 배포 후 컨테이너에 반영해야 한다. FE 담당 합의·앱 복귀 구현·실기기 검증 완료를 뜻하지 않는다.
-- Google/Naver 후보 App Links: https://k15e102.p.ssafy.io/auth/android/oauth/google/callback, https://k15e102.p.ssafy.io/auth/android/oauth/naver/callback. 두 주소는 아직 미확정이며 콘솔 등록·서버 환경 주입 전이다.
+- 카카오 App Links: https://eolssu.site/auth/android/oauth/kakao/callback . 사용자가 BE 기준 주소로 확정했으며 카카오 앱1628175의 REST API 키 설정에 등록 후 재조회했다. 로그인·연결 모두 같은 URI를 사용한다. AUTH_OAUTH_KAKAO_REDIRECT_URIS에 같은 값을 서버 환경 파일로 저장했고 운영 Compose에도 콜백·APK 지문 전달을 추가했다. 새 코드 배포 후 컨테이너에 반영해야 한다. FE 담당 합의·앱 복귀 구현·실기기 검증 완료를 뜻하지 않는다.
+- Google/Naver 후보 App Links: https://eolssu.site/auth/android/oauth/google/callback, https://eolssu.site/auth/android/oauth/naver/callback. 두 주소는 아직 미확정이며 콘솔 등록·서버 환경 주입 전이다.
 - 앱은 제공자·LOGIN/LINK 목적·정확한 redirectUri·요청 state·만료를 인증 시도 상태로 보관한다. 외부 브라우저로 갔다가 프로세스가 종료돼도 잘못된 목적/사용자의 흐름으로 복구하지 않아야 한다. 코드·state·쿠키를 로그에 쓰거나 인가 코드를 영구 저장하지 않는다.
 - 새 시작과 onNewIntent 복귀 모두 다루고, URI의 https·정확한 호스트·허용된 경로·provider·state를 확인한다. 재생·중복 복귀와 취소를 처리하며 완료 요청은1회만 보낸다. 로그인과 마이페이지 연결의 start·완료를 섞지 않는다.
 - 현재 Android HttpClient는 SecureCookiesStorage를 공유해 서버 쿠키를 암호화 저장하며 OAuth 결속 쿠키도 이름 제한 없이 저장할 수 있다. 브라우저 대신 이 HTTP 클라이언트로 완료 API를 호출한다.
@@ -139,7 +139,7 @@ adb shell pm get-app-links com.ssafy.eolssu
 
 | 항목 | Android | iOS |
 | --- | --- | --- |
-| redirectUri(start·완료 요청, 제공자 콘솔·서버 허용 목록) | `https://k15e102.p.ssafy.io/auth/android/oauth/{provider}/callback` | `https://k15e102.p.ssafy.io/api/auth/ios/oauth/{provider}/callback` |
+| redirectUri(start·완료 요청, 제공자 콘솔·서버 허용 목록) | `https://eolssu.site/auth/android/oauth/{provider}/callback` | `https://eolssu.site/api/auth/ios/oauth/{provider}/callback` |
 | 앱이 받는 복귀 주소 | redirectUri 그대로(App Links) | `com.ssafy.eolssu://oauth/{provider}/callback?…` |
 | 제공자 화면 | 외부 브라우저 | `ASWebAuthenticationSession`(callbackURLScheme `com.ssafy.eolssu`) |
 
@@ -155,7 +155,7 @@ adb shell pm get-app-links com.ssafy.eolssu
 
 | 항목 | 웹 |
 | --- | --- |
-| redirectUri(start·완료 요청, 제공자 콘솔·서버 허용 목록) | `{페이지 origin}/auth/oauth/{provider}/callback`. 운영은 `https://k15e102.p.ssafy.io/auth/oauth/{provider}/callback` |
+| redirectUri(start·완료 요청, 제공자 콘솔·서버 허용 목록) | `{페이지 origin}/auth/oauth/{provider}/callback`. 운영은 `https://eolssu.site/auth/oauth/{provider}/callback` |
 | 앱이 받는 복귀 주소 | redirectUri 그대로. 같은 프로토콜·호스트·포트와 정확한 경로만 받고, 사용자 정보가 든 주소는 거절한다 |
 | 제공자 화면 | 같은 탭 이동(`location.replace`, 지금 화면 기록을 제공자 화면으로 바꿈). 팝업은 쓰지 않는다. 기록을 남기면 제공자 화면에서 브라우저 뒤로 가기를 눌렀을 때 바로 다시 시작하는 간편 로그인 화면이 열려 제공자 화면으로 되돌아간다 |
 | 시도 상태 보관 | 탭 `sessionStorage`(`OAuthAttemptStore` 이름으로 등록한 `SecureStore`). 탭을 닫으면 사라진다 |
@@ -178,12 +178,12 @@ adb shell pm get-app-links com.ssafy.eolssu
 App Store 심사 가이드라인 4.8 대응. iOS에서 카카오·Google·네이버를 제공하므로 Apple 로그인을 함께 제공한다. 사용자 결정(2026-11-04): iOS 기본 Apple 로그인(`ASAuthorizationController`), Apple 이메일은 추가 본인 확인 대상, Apple 토큰은 탈퇴 신청·연결 해제 즉시 해지.
 
 - 제공자 이름 `apple`(DB·서버 `APPLE`). 기존 start·완료·신규 가입·계정 연결 제안·마이페이지 연결/해제·탈퇴 재인증 API와 state·binding 쿠키·티켓 규칙을 그대로 쓴다. Android·웹은 버튼을 표시하지 않는다.
-- start: redirectUri는 iOS 중계 주소 `https://k15e102.p.ssafy.io/api/auth/ios/oauth/apple/callback`이며 `AUTH_OAUTH_APPLE_REDIRECT_URIS` 허용 목록과 같아야 한다. 응답 authorizationUrl은 Apple 웹 인증 주소 형식이고 `state`와 `nonce`(= state의 SHA-256 base64url)를 담는다. 앱은 이 주소를 열지 않고 두 값을 꺼내 기본 Apple 로그인 요청(`nonce`)에 넣는다.
+- start: redirectUri는 iOS 중계 주소 `https://eolssu.site/api/auth/ios/oauth/apple/callback`이며 `AUTH_OAUTH_APPLE_REDIRECT_URIS` 허용 목록과 같아야 한다. 응답 authorizationUrl은 Apple 웹 인증 주소 형식이고 `state`와 `nonce`(= state의 SHA-256 base64url)를 담는다. 앱은 이 주소를 열지 않고 두 값을 꺼내 기본 Apple 로그인 요청(`nonce`)에 넣는다.
 - 앱 복귀: 성공하면 Apple이 준 authorizationCode로 `com.ssafy.eolssu://oauth/apple/callback?code=…&state=…`를, 실패면 `?error=…&state=…`를 만들어 다른 제공자와 같은 복귀 처리로 넘긴다. 사용자가 창을 닫으면 다른 제공자의 인증 창을 닫았을 때처럼 아무것도 넘기지 않는다('다시 열기'). 중계 서버는 거치지 않는다. Apple 버튼은 iOS 로그인 화면 맨 앞(검정 바탕·흰 Apple 로고)과 마이페이지에만 보이고, 다른 기기에서 연결해 둔 Apple은 마이페이지에서 해제만 할 수 있다.
 - 완료: 서버가 `https://appleid.apple.com/auth/token`에 코드를 교환한다(client_id = 번들 ID `com.ssafy.eolssu`, client_secret = 팀 ID·키 ID·.p8 개인키로 서명한 ES256 JWT, redirect_uri 없음). 받은 id_token은 Apple 공개키(`/auth/keys`)로 서명·`iss`·`aud`(번들 ID)·만료를 확인하고 `nonce`가 위 값과 같아야 한다(없거나 다르면 `401 OAUTH_VERIFICATION_FAILED`). subject는 `sub`.
 - 이메일: id_token의 `email`(가려진 릴레이 주소 포함)을 쓰되 확인된 이메일로 보지 않는다(네이버와 같음). 같은 이메일 회원이 있으면 계정 연결 제안에서 비밀번호·이메일 인증번호가 필요하고, 신규 가입 회원에는 이메일을 저장하지 않는다.
 - 토큰 보관·해지: 교환 응답의 refresh_token을 Apple 개인키에서 유도한 키로 AES-GCM 암호화해 연결 행(`user_social_accounts.provider_token`)에 둔다. 가입·연결 제안 티켓에도 같은 형태로 10분 보관한다. 로그인·탈퇴 재인증 때 새 토큰으로 바꾼다. 연결 해제와 탈퇴 신청(비밀번호·소셜 재인증 모두) 커밋 뒤 `https://appleid.apple.com/auth/revoke`로 해지하고 저장값을 지운다. 해지 실패는 탈퇴·해제를 되돌리지 않고 기록만 남긴다. 30일 안에 Apple로 다시 로그인하면 새 토큰을 저장한다.
 - 설정: `AUTH_OAUTH_APPLE_CLIENT_ID`(번들 ID), `AUTH_OAUTH_APPLE_TEAM_ID`, `AUTH_OAUTH_APPLE_KEY_ID`, `AUTH_OAUTH_APPLE_PRIVATE_KEY`(PKCS#8 PEM, 줄바꿈은 `\n` 허용), `AUTH_OAUTH_APPLE_REDIRECT_URIS`. 하나라도 비면 Apple start·완료는 `503`이다. 키는 유료 Apple Developer 계정에서 만들며 저장소·채팅에 넣지 않는다.
-- 개발 앱(S15P31E102-444, 2026-11-09 사용자 결정): Ad Hoc 개발 앱 '얼쑤 개발'(번들 ID `com.ssafy.eolssu.dev`)은 Apple Developer에서 `com.ssafy.eolssu`에 그룹화해 같은 키와 같은 Apple `sub`를 쓴다. Apple 코드는 받은 앱의 번들 ID로만 교환되므로, 개발 앱은 Apple start·완료의 redirectUri로 `https://k15e102.p.ssafy.io/api/auth/ios-dev/oauth/apple/callback`을 보낸다. 서버는 이 값이 `AUTH_OAUTH_APPLE_DEV_REDIRECT_URIS`에 있고 `AUTH_OAUTH_APPLE_DEV_CLIENT_ID`가 있을 때만 받고, 그 번들 ID로 교환(client_id·client_secret의 sub)과 id_token `aud`를 확인한다. 둘 중 하나라도 비면 이 redirectUri는 `401 OAUTH_VERIFICATION_FAILED`다. 해지는 출시 번들 ID로 먼저 하고 Apple이 4xx로 거절하면 개발 번들 ID로 한 번 더 한다. 출시 앱과 다른 제공자의 요청은 바뀌지 않는다.
+- 개발 앱(S15P31E102-444, 2026-11-09 사용자 결정): Ad Hoc 개발 앱 '얼쑤 개발'(번들 ID `com.ssafy.eolssu.dev`)은 Apple Developer에서 `com.ssafy.eolssu`에 그룹화해 같은 키와 같은 Apple `sub`를 쓴다. Apple 코드는 받은 앱의 번들 ID로만 교환되므로, 개발 앱은 Apple start·완료의 redirectUri로 `https://eolssu.site/api/auth/ios-dev/oauth/apple/callback`을 보낸다. 서버는 이 값이 `AUTH_OAUTH_APPLE_DEV_REDIRECT_URIS`에 있고 `AUTH_OAUTH_APPLE_DEV_CLIENT_ID`가 있을 때만 받고, 그 번들 ID로 교환(client_id·client_secret의 sub)과 id_token `aud`를 확인한다. 둘 중 하나라도 비면 이 redirectUri는 `401 OAUTH_VERIFICATION_FAILED`다. 해지는 출시 번들 ID로 먼저 하고 Apple이 4xx로 거절하면 개발 번들 ID로 한 번 더 한다. 출시 앱과 다른 제공자의 요청은 바뀌지 않는다.
 - 앱 설정: iOS `com.apple.developer.applesignin` entitlement(Default). 무료 Personal Team은 이 기능을 지원하지 않아 유료 팀으로 서명해야 빌드된다.
 - 제외: Apple 서버 간 알림(이메일 전달 변경·계정 삭제 통지) 수신, Android·웹 Apple 로그인.

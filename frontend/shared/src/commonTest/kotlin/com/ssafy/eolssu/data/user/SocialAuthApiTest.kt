@@ -44,7 +44,7 @@ class SocialAuthApiTest {
     @Test
     fun startSendsTheAppRedirectAndReadsTheProviderAddress() = runTest {
         val repo = auth { request ->
-            assertEquals("""{"redirectUri":"https://k15e102.p.ssafy.io/auth/android/oauth/kakao/callback"}""", (request.body as TextContent).text)
+            assertEquals("""{"redirectUri":"https://eolssu.site/auth/android/oauth/kakao/callback"}""", (request.body as TextContent).text)
             json("""{"isSuccess":true,"result":{"authorizationUrl":"${OAuthAttemptsTest.authorizationUrl()}","expiresAt":"2026-10-30T01:10:00Z"}}""")
         }
         val started = assertIs<OAuthStartResult.Started>(repo.startSocialLogIn(SocialProvider.Kakao))
@@ -58,7 +58,7 @@ class SocialAuthApiTest {
         var body = """{"isSuccess":true,"result":{"userId":"42","nickname":"회원","instrumentId":"1","notationMode":"HANJA","withdrawalCancelled":true}}"""
         val repo = auth { request ->
             assertEquals(
-                """{"authorizationCode":"code-1","redirectUri":"https://k15e102.p.ssafy.io/auth/android/oauth/kakao/callback","state":"${OAuthAttemptsTest.STATE}"}""",
+                """{"authorizationCode":"code-1","redirectUri":"https://eolssu.site/auth/android/oauth/kakao/callback","state":"${OAuthAttemptsTest.STATE}"}""",
                 (request.body as TextContent).text,
             )
             json(body, status)

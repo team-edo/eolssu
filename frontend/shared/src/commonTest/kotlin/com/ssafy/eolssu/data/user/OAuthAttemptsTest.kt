@@ -26,7 +26,7 @@ class OAuthAttemptsTest {
         assertEquals(SocialProvider.Kakao, accepted.provider)
         assertEquals("code-1", accepted.authorizationCode)
         assertEquals(STATE, accepted.state)
-        assertEquals("https://k15e102.p.ssafy.io/auth/android/oauth/kakao/callback", accepted.redirectUri)
+        assertEquals("https://eolssu.site/auth/android/oauth/kakao/callback", accepted.redirectUri)
         // 같은 주소가 다시 오면(중복 복귀·재생) 완료 요청을 다시 만들지 않는다.
         assertEquals(OAuthReturn.Ignored, attempts.accept(callback(), OAuthPurpose.LogIn))
         assertNull(attempts.pending())
@@ -39,8 +39,8 @@ class OAuthAttemptsTest {
 
         listOf(
             callback().replace("https://", "http://"),
-            callback().replace("k15e102.p.ssafy.io", "k15e102.p.ssafy.io.evil.test"),
-            callback().replace("k15e102.p.ssafy.io", "k15e102.p.ssafy.io:8443"),
+            callback().replace("eolssu.site", "eolssu.site.evil.test"),
+            callback().replace("eolssu.site", "eolssu.site:8443"),
             callback().replace("/callback", "/callback/extra"),
             callback().replace("/auth/android/", "/auth/"),
             callback(state = OTHER_STATE),
@@ -66,7 +66,7 @@ class OAuthAttemptsTest {
         begin()
         assertEquals(
             OAuthReturn.Restart(OAuthRestartReason.Cancelled),
-            attempts.accept("https://k15e102.p.ssafy.io/auth/android/oauth/kakao/callback?error=access_denied&state=$STATE", OAuthPurpose.LogIn),
+            attempts.accept("https://eolssu.site/auth/android/oauth/kakao/callback?error=access_denied&state=$STATE", OAuthPurpose.LogIn),
         )
 
         begin(state = OTHER_STATE)
@@ -149,6 +149,6 @@ class OAuthAttemptsTest {
             "https://kauth.kakao.com/oauth/authorize?client_id=test&redirect_uri=x&response_type=code&state=$state"
 
         fun callback(state: String = STATE, provider: String = "kakao", code: String = "code-1") =
-            "https://k15e102.p.ssafy.io/auth/android/oauth/$provider/callback?code=$code&state=$state"
+            "https://eolssu.site/auth/android/oauth/$provider/callback?code=$code&state=$state"
     }
 }

@@ -416,7 +416,7 @@ V9 `oauth_proofs`에는 토큰·쿠키 원문 대신 SHA-256과 소비 여부를
 
 - UI: `/api/swagger-ui.html` → `/api/swagger-ui/index.html`
 - JSON: `/api/v3/api-docs`
-- 배포 후 주소: https://k15e102.p.ssafy.io/api/swagger-ui.html
+- 배포 후 주소: https://eolssu.site/api/swagger-ui.html
 
 문서·UI 정적 파일·설정 JSON의 GET 조회는 로그인 없이 가능합니다. access_token 쿠키가 없거나 잘못됐거나 만료돼도 문서는 열립니다. 실제 회원 API의 인증과 ACTIVE 회원 검증은 유지합니다. Try it out으로 회원 API를 호출하려면 같은 출처의 앱에서 먼저 로그인합니다. 다른 HTTP 클라이언트의 로그인 쿠키는 브라우저와 공유되지 않습니다.
 
@@ -454,7 +454,7 @@ S15P31E102-304부터 AI의 `tuningOffsetCent`와 `tuningOutOfRange`를 V11의 nu
 
 배포 전에 백업과 V9 적용 상태를 확인하고 기존 마이그레이션 절차로 **V10**을 적용해야 합니다. V10은 선택적인 OAuth 시작 시각 열과 이벤트 해시 영수증·subject 해시 워터마크를 추가합니다. 새 JAR는 이 스키마가 필요합니다. 되돌릴 때는 콘솔 송신을 먼저 끄고 이전 JAR를 배포하며 추가 열·테이블은 보존합니다. 자동 다운 마이그레이션이나 데이터 삭제는 하지 않습니다.
 
-배포·설정 주입·수신 확인 후 별도 승인으로 카카오 콘솔에 `https://k15e102.p.ssafy.io/api/webhooks/kakao/events`를 등록하고 **계정 상태 변경 → User Unlinked만** 구독합니다. 기존 어드민 키 방식의 연결 해제 콜백을 함께 활성화하지 않습니다. 실제 계정의 연결 해제·중복 전달·세션 보존을 확인하고, 지속503은 설정/JWKS 접근/DB 잠금을 점검합니다. 공식 재시도는 최초 포함6회이며 연속3시간 실패 시 비활성화될 수 있습니다. 현재 로컬 구현·검증 단계이며 콘솔 활성화와 실제 송신 검증은 아직 하지 않았습니다. [상세 계약·보관·시간 경계](../docs/specs/kakao-webhook.md), [진행 기록](../docs/plans/S15P31E102-296.md).
+배포·설정 주입·수신 확인 후 별도 승인으로 카카오 콘솔에 `https://eolssu.site/api/webhooks/kakao/events`를 등록하고 **계정 상태 변경 → User Unlinked만** 구독합니다. 기존 어드민 키 방식의 연결 해제 콜백을 함께 활성화하지 않습니다. 실제 계정의 연결 해제·중복 전달·세션 보존을 확인하고, 지속503은 설정/JWKS 접근/DB 잠금을 점검합니다. 공식 재시도는 최초 포함6회이며 연속3시간 실패 시 비활성화될 수 있습니다. 현재 로컬 구현·검증 단계이며 콘솔 활성화와 실제 송신 검증은 아직 하지 않았습니다. [상세 계약·보관·시간 경계](../docs/specs/kakao-webhook.md), [진행 기록](../docs/plans/S15P31E102-296.md).
 
 ### 계정 한정 인증 만료 예외
 

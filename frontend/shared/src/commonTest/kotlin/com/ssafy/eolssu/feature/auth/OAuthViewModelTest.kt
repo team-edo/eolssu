@@ -116,7 +116,7 @@ class OAuthViewModelTest {
     @Test
     fun providerCancelStopsAndRetryStartsOver() = runTest {
         val viewModel = viewModel()
-        links.deliver("https://k15e102.p.ssafy.io/auth/android/oauth/kakao/callback?error=access_denied&state=$STATE")
+        links.deliver("https://eolssu.site/auth/android/oauth/kakao/callback?error=access_denied&state=$STATE")
         assertEquals(OAuthStep.Stopped(OAuthProblem.Cancelled), viewModel.step.value)
         assertTrue(auth.completed.isEmpty())
 

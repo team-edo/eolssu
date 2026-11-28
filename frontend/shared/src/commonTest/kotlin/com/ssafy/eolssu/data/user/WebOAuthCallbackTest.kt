@@ -19,7 +19,7 @@ import kotlin.test.assertTrue
  * redirectUri로 보내고, 같은 탭으로 돌아온 그 주소의 코드·state를 같은 시도 규칙으로 받는다.
  */
 class WebOAuthCallbackTest {
-    private val production = WebOAuthCallback("https://k15e102.p.ssafy.io")
+    private val production = WebOAuthCallback("https://eolssu.site")
     private val store = FakeSecureStore()
     private val attempts = OAuthAttempts(store, SignedInMember(FakeKeyValueStore()), production) { 1_000L }
 
@@ -28,9 +28,9 @@ class WebOAuthCallbackTest {
 
     @Test
     fun redirectIsThePageOriginPlusTheProviderPath() {
-        assertEquals("https://k15e102.p.ssafy.io/auth/oauth/kakao/callback", production.uriFor(SocialProvider.Kakao))
+        assertEquals("https://eolssu.site/auth/oauth/kakao/callback", production.uriFor(SocialProvider.Kakao))
         // window.location.origin은 끝에 /가 없지만, 붙어 와도 같은 주소를 만든다.
-        assertEquals("https://k15e102.p.ssafy.io/auth/oauth/naver/callback", WebOAuthCallback("https://k15e102.p.ssafy.io/").uriFor(SocialProvider.Naver))
+        assertEquals("https://eolssu.site/auth/oauth/naver/callback", WebOAuthCallback("https://eolssu.site/").uriFor(SocialProvider.Naver))
         assertEquals("http://localhost:8080/auth/oauth/google/callback", WebOAuthCallback("http://localhost:8080").uriFor(SocialProvider.Google))
     }
 
@@ -44,13 +44,13 @@ class WebOAuthCallbackTest {
     fun onlyTheExactSameOriginPathIsOurs() {
         assertEquals(SocialProvider.Kakao, production.providerOf(Url(webReturn())))
         assertEquals(SocialProvider.Google, production.providerOf(Url(webReturn("google"))))
-        assertEquals(SocialProvider.Naver, production.providerOf(Url(webReturn("naver").replace("k15e102", "K15E102"))))
+        assertEquals(SocialProvider.Naver, production.providerOf(Url(webReturn("naver").replace("eolssu", "EOLSSU"))))
 
         listOf(
             webReturn().replace("https://", "http://"),
-            webReturn().replace("k15e102.p.ssafy.io", "k15e102.p.ssafy.io.evil.test"),
-            webReturn().replace("k15e102.p.ssafy.io", "evil.test"),
-            webReturn().replace("k15e102.p.ssafy.io", "k15e102.p.ssafy.io:8443"),
+            webReturn().replace("eolssu.site", "eolssu.site.evil.test"),
+            webReturn().replace("eolssu.site", "evil.test"),
+            webReturn().replace("eolssu.site", "eolssu.site:8443"),
             webReturn().replace("https://", "https://x@"),
             webReturn().replace("https://", "https://x:y@"),
             webReturn().replace("/callback", "/callback/extra"),
@@ -80,7 +80,7 @@ class WebOAuthCallbackTest {
 
         val callback = assertIs<OAuthReturn.Accepted>(restored.accept(webReturn(), OAuthPurpose.LogIn)).callback
         assertEquals("code-1", callback.authorizationCode)
-        assertEquals("https://k15e102.p.ssafy.io/auth/oauth/kakao/callback", callback.redirectUri)
+        assertEquals("https://eolssu.site/auth/oauth/kakao/callback", callback.redirectUri)
         assertTrue(store.values.isEmpty())
         // 같은 주소를 다시 받아도 완료 요청을 다시 만들지 않는다.
         assertEquals(OAuthReturn.Ignored, restored.accept(webReturn(), OAuthPurpose.LogIn))
@@ -112,6 +112,6 @@ class WebOAuthCallbackTest {
     }
 
     private companion object {
-        const val ORIGIN = "https://k15e102.p.ssafy.io"
+        const val ORIGIN = "https://eolssu.site"
     }
 }

@@ -41,7 +41,7 @@ class IosOAuthRelayTest {
 
         val callback = assertIs<OAuthReturn.Accepted>(attempts.accept(appReturn(), OAuthPurpose.LogIn)).callback
         assertEquals("code-1", callback.authorizationCode)
-        assertEquals("https://k15e102.p.ssafy.io/api/auth/ios/oauth/kakao/callback", callback.redirectUri)
+        assertEquals("https://eolssu.site/api/auth/ios/oauth/kakao/callback", callback.redirectUri)
     }
 
     @Test
@@ -64,7 +64,7 @@ class IosOAuthRelayTest {
         ).callback
         assertEquals(SocialProvider.Apple, callback.provider)
         assertEquals("apple+code/1", callback.authorizationCode)
-        assertEquals("https://k15e102.p.ssafy.io/api/auth/ios/oauth/apple/callback", callback.redirectUri)
+        assertEquals("https://eolssu.site/api/auth/ios/oauth/apple/callback", callback.redirectUri)
     }
 
     @Test
@@ -131,9 +131,9 @@ class IosOAuthRelayTest {
         assertIs<OAuthStartResult.Started>(user.startWithdrawalReauth(SocialProvider.Kakao))
         assertEquals(
             listOf(
-                """/api/auth/oauth/google/start {"redirectUri":"https://k15e102.p.ssafy.io/api/auth/ios/oauth/google/callback"}""",
-                """/api/users/me/social-accounts/naver/start {"redirectUri":"https://k15e102.p.ssafy.io/api/auth/ios/oauth/naver/callback"}""",
-                """/api/users/me/withdrawal/oauth/kakao/start {"redirectUri":"https://k15e102.p.ssafy.io/api/auth/ios/oauth/kakao/callback"}""",
+                """/api/auth/oauth/google/start {"redirectUri":"https://eolssu.site/api/auth/ios/oauth/google/callback"}""",
+                """/api/users/me/social-accounts/naver/start {"redirectUri":"https://eolssu.site/api/auth/ios/oauth/naver/callback"}""",
+                """/api/users/me/withdrawal/oauth/kakao/start {"redirectUri":"https://eolssu.site/api/auth/ios/oauth/kakao/callback"}""",
             ),
             sent,
         )
@@ -142,12 +142,12 @@ class IosOAuthRelayTest {
     @Test
     fun developmentAppSendsItsOwnAppleAddressAndKeepsEverythingElse() {
         val dev = IosDevOAuthRelay.forBundle("com.ssafy.eolssu.dev")
-        assertEquals("https://k15e102.p.ssafy.io/api/auth/ios-dev/oauth/apple/callback", dev.uriFor(SocialProvider.Apple))
+        assertEquals("https://eolssu.site/api/auth/ios-dev/oauth/apple/callback", dev.uriFor(SocialProvider.Apple))
         assertEquals(IosOAuthRelay.uriFor(SocialProvider.Kakao), dev.uriFor(SocialProvider.Kakao))
         assertEquals(IosOAuthRelay.providers, dev.providers)
         assertEquals(SocialProvider.Apple, dev.providerOf(io.ktor.http.Url(appReturn("apple"))))
         for (bundle in listOf("com.ssafy.eolssu", "com.ssafy.eolssu.eunseo", null)) {
-            assertEquals("https://k15e102.p.ssafy.io/api/auth/ios/oauth/apple/callback", IosDevOAuthRelay.forBundle(bundle).uriFor(SocialProvider.Apple))
+            assertEquals("https://eolssu.site/api/auth/ios/oauth/apple/callback", IosDevOAuthRelay.forBundle(bundle).uriFor(SocialProvider.Apple))
         }
     }
 }

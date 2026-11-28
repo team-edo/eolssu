@@ -11,14 +11,14 @@ val releaseStorePassword = providers.environmentVariable("EOLSSU_STORE_PASSWORD"
 val releaseAlias = providers.environmentVariable("EOLSSU_KEY_ALIAS").orNull
 val releaseKeyPassword = providers.environmentVariable("EOLSSU_KEY_PASSWORD").orNull
 val releaseSigningValues = listOf(releaseStore, releaseStorePassword, releaseAlias, releaseKeyPassword)
-val debugApiBaseUrl = providers.gradleProperty("eolssu.debugApiBaseUrl").orElse("https://k15e102.p.ssafy.io").get()
+val debugApiBaseUrl = providers.gradleProperty("eolssu.debugApiBaseUrl").orElse("https://eolssu.site").get()
 val qaLive = providers.gradleProperty("eolssu.qaLive").orElse("false").get().toBooleanStrict()
 check(!qaLive || debugApiBaseUrl == "http://127.0.0.1:18180") {
     "Live QA requires the isolated loopback API http://127.0.0.1:18180."
 }
 val debugLoopbackPort = Regex("http://127\\.0\\.0\\.1:([0-9]{1,5})").matchEntire(debugApiBaseUrl)
     ?.groupValues?.get(1)?.toIntOrNull()
-check(debugApiBaseUrl == "https://k15e102.p.ssafy.io" || debugLoopbackPort in 1..65535) {
+check(debugApiBaseUrl == "https://eolssu.site" || debugLoopbackPort in 1..65535) {
     "Debug API override must be a loopback URL; release always uses production HTTPS."
 }
 check(releaseSigningValues.all { it.isNullOrBlank() } || releaseSigningValues.all { !it.isNullOrBlank() }) {
@@ -78,7 +78,7 @@ android {
         }
         release {
             buildConfigField("boolean", "QA_LIVE", "false")
-            buildConfigField("String", "API_BASE_URL", "\"https://k15e102.p.ssafy.io\"")
+            buildConfigField("String", "API_BASE_URL", "\"https://eolssu.site\"")
             isDebuggable = false
             if (!releaseStore.isNullOrBlank()) signingConfig = signingConfigs.getByName("release")
             // R8 shrink/obfuscate (S15P31E102-1120). The AAB carries mapping.txt for Play crash retrace.

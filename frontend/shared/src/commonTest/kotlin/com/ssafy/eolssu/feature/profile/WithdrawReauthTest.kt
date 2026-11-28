@@ -88,7 +88,7 @@ class WithdrawReauthTest {
     fun cancelledOrExpiredProofStopsAndCanStartOver() = runTest {
         val viewModel = viewModel()
         viewModel.startReauth(SocialProvider.Kakao)
-        links.deliver("https://k15e102.p.ssafy.io/auth/android/oauth/kakao/callback?error=access_denied&state=$STATE")
+        links.deliver("https://eolssu.site/auth/android/oauth/kakao/callback?error=access_denied&state=$STATE")
         assertEquals(SocialLinkProblem.Cancelled, viewModel.uiState.value.reauth?.problem)
         assertTrue(confirmed.isEmpty())
 

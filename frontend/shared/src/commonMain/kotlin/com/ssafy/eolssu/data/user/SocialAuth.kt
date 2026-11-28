@@ -44,7 +44,7 @@ interface OAuthRoute {
  * 호스트·경로는 `androidApp`의 Manifest App Links `intent-filter`와 같아야 한다.
  */
 object OAuthRedirect : OAuthRoute {
-    const val HOST = "k15e102.p.ssafy.io"
+    const val HOST = "eolssu.site"
 
     override fun uriFor(provider: SocialProvider) = "https://$HOST${pathFor(provider)}"
 
@@ -98,7 +98,7 @@ object IosDevOAuthRelay : OAuthRoute by IosOAuthRelay {
 /**
  * 웹 복귀(`docs/specs/social-auth.md` 웹 간편 로그인). 웹 앱은 같은 탭에서 제공자 화면으로 이동하고, 제공자는 페이지와 같은 주소(origin)의
  * `/auth/oauth/<제공자>/callback`으로 돌려보낸다. `index.html`이 그 주소를 받아 둔 뒤 주소창을 `/`로 바꾸고 웹 앱을 띄운다.
- * [origin]은 `window.location.origin`이다(운영 `https://k15e102.p.ssafy.io`). 이 주소가 제공자 콘솔·서버 허용 목록에 있어야 한다.
+ * [origin]은 `window.location.origin`이다(운영 `https://eolssu.site`). 이 주소가 제공자 콘솔·서버 허용 목록에 있어야 한다.
  */
 class WebOAuthCallback(origin: String) : OAuthRoute {
     private val base = Url(origin)

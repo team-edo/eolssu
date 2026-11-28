@@ -368,11 +368,11 @@ release 키가 없으면 이 스크립트는 중단하며 debug 키로 대체하
 
 ## 웹 빌드·테스트·배포
 
-운영 웹(`https://k15e102.p.ssafy.io`)은 develop에 병합해도 바뀌지 않습니다. 담당자가 Jenkins `eolssu-frontend-web-수동배포용` 잡의 **Build with Parameters**에서, 성공한 `eolssu-backend` 빌드의 develop 전체 커밋 SHA를 `REVISION`에 넣어 실행해야 바뀝니다. 잡은 그 SHA가 develop 이력에 있는지 확인한 뒤 `:shared:wasmJsTest`, `:shared:jsTest`, production Wasm 최적화와 `:webApp:wasmJsBrowserDistribution`을 실행합니다. 후보 자산 검증을 통과하면 프론트 컨테이너만 교체하고, 배포 검사가 실패하면 이전 웹으로 자동 복구합니다. 백엔드·DB는 건드리지 않으며 교체할 때 몇 초 연결이 끊길 수 있습니다. Linux·JDK 21·Google Chrome(`CHROME_BIN=/usr/bin/google-chrome`) 환경이고 Android·iOS 패키지는 포함하지 않습니다.
+운영 웹(`https://eolssu.site`)은 develop에 병합해도 바뀌지 않습니다. 담당자가 Jenkins `eolssu-frontend-web-수동배포용` 잡의 **Build with Parameters**에서, 성공한 `eolssu-backend` 빌드의 develop 전체 커밋 SHA를 `REVISION`에 넣어 실행해야 바뀝니다. 잡은 그 SHA가 develop 이력에 있는지 확인한 뒤 `:shared:wasmJsTest`, `:shared:jsTest`, production Wasm 최적화와 `:webApp:wasmJsBrowserDistribution`을 실행합니다. 후보 자산 검증을 통과하면 프론트 컨테이너만 교체하고, 배포 검사가 실패하면 이전 웹으로 자동 복구합니다. 백엔드·DB는 건드리지 않으며 교체할 때 몇 초 연결이 끊길 수 있습니다. Linux·JDK 21·Google Chrome(`CHROME_BIN=/usr/bin/google-chrome`) 환경이고 Android·iOS 패키지는 포함하지 않습니다.
 
 - **배포 주기:** 웹에 영향 있는 MR 묶음이 병합되면 그날 안에 배포합니다. 그런 MR이 없어도 develop이 운영 웹보다 앞서 있으면 평일 1회 배포합니다. 담당은 우동균입니다(2026-11-24 결정). 반복 부담이 커지면 하루 1회 예약 배포를 별도 작업으로 검토합니다.
 - **걸리는 시간:** 잡에는 20분 제한이 있습니다. Gradle 캐시가 데워져 있으면 약 8분, 캐시가 비어 있으면 18분 가까이 걸립니다(2026-11-24 #24, 1,061초). 제한 시간으로 ABORTED되면 운영은 바뀌지 않으므로 같은 SHA로 한 번 더 실행합니다.
-- **배포 커밋 확인:** `curl -fsS https://k15e102.p.ssafy.io/__eolssu_release.json`의 `sha`가 `REVISION`과 같아야 합니다.
+- **배포 커밋 확인:** `curl -fsS https://eolssu.site/__eolssu_release.json`의 `sha`가 `REVISION`과 같아야 합니다.
 - **develop 웹 테스트:** `eolssu-web-tests` 잡([web-tests.Jenkinsfile](../infra/jenkins/web-tests.Jenkinsfile))은 웹 빌드 입력이 바뀐 develop 커밋마다 `eolssu-backend`가 예약하며, `:shared:wasmJsTest`·`:shared:jsTest`만 돌리고 배포하지 않습니다. 배포 잡과 같은 `edo1-web` 노드를 써서 두 잡이 겹치면 나중 잡이 기다립니다. 정의는 develop에 있고, 운영 Jenkins 적용은 [S15P31E102-1275](https://ssafy.atlassian.net/browse/S15P31E102-1275)에서 [적용 절차](../infra/jenkins/controller/README.md#웹-테스트-잡)대로 합니다.
 
 설치·실패 복구·이전 릴리스로 되돌리기는 [운영 문서](../infra/runtime/README.md#프론트-웹-수동-배포), 배포 순서 규칙은 [Jenkins 배포 순서](../docs/specs/jenkins-deploy-order.md#프론트-웹-수동-배포-s15p31e102-520)를 따릅니다. 잡의 테스트 통과가 업무 기능 전체를 검증한다는 뜻은 아닙니다.

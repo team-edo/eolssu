@@ -86,6 +86,6 @@ class WebOAuthTest {
     private companion object {
         /** `index.html`과 `WebOAuth.kt`가 함께 쓰는 키. */
         const val RETURN_KEY = "eolssu.oauth_return"
-        const val RETURN = "https://k15e102.p.ssafy.io/auth/oauth/kakao/callback?code=code-1&state=sssssssssssssssssssssssssssssssssssssssssss"
+        const val RETURN = "https://eolssu.site/auth/oauth/kakao/callback?code=code-1&state=sssssssssssssssssssssssssssssssssssssssssss"
     }
 }

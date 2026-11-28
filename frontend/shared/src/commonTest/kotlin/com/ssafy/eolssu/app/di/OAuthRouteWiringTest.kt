@@ -83,32 +83,32 @@ class OAuthRouteWiringTest {
 
     @Test
     fun registeredIosRouteReachesEveryStartAndAttempt() = runTest {
-        val ios = """{"redirectUri":"https://k15e102.p.ssafy.io/api/auth/ios/oauth/kakao/callback"}"""
-        assertEquals(listOf(ios, ios, ios, "https://k15e102.p.ssafy.io/api/auth/ios/oauth/kakao/callback"), redirectsSentBy(IosOAuthRelay))
+        val ios = """{"redirectUri":"https://eolssu.site/api/auth/ios/oauth/kakao/callback"}"""
+        assertEquals(listOf(ios, ios, ios, "https://eolssu.site/api/auth/ios/oauth/kakao/callback"), redirectsSentBy(IosOAuthRelay))
     }
 
     @Test
     fun withoutARegisteredRouteTheAndroidAddressStays() = runTest {
-        val android = """{"redirectUri":"https://k15e102.p.ssafy.io/auth/android/oauth/kakao/callback"}"""
+        val android = """{"redirectUri":"https://eolssu.site/auth/android/oauth/kakao/callback"}"""
         assertEquals(
-            listOf(android, android, android, "https://k15e102.p.ssafy.io/auth/android/oauth/kakao/callback"),
+            listOf(android, android, android, "https://eolssu.site/auth/android/oauth/kakao/callback"),
             redirectsSentBy(null),
         )
     }
 
     @Test
     fun registeredWebRouteReachesEveryStartAndAttempt() = runTest {
-        val web = """{"redirectUri":"https://k15e102.p.ssafy.io/auth/oauth/kakao/callback"}"""
+        val web = """{"redirectUri":"https://eolssu.site/auth/oauth/kakao/callback"}"""
         assertEquals(
-            listOf(web, web, web, "https://k15e102.p.ssafy.io/auth/oauth/kakao/callback"),
-            redirectsSentBy(WebOAuthCallback("https://k15e102.p.ssafy.io")),
+            listOf(web, web, web, "https://eolssu.site/auth/oauth/kakao/callback"),
+            redirectsSentBy(WebOAuthCallback("https://eolssu.site")),
         )
     }
 
     @Test
     fun webKeepsTheAttemptInTheTabStoreWithoutRegisteringASecureStore() {
         val tab = FakeSecureStore()
-        val app = koinApplication { modules(platform(WebOAuthCallback("https://k15e102.p.ssafy.io"), attemptStore = tab), appModule) }
+        val app = koinApplication { modules(platform(WebOAuthCallback("https://eolssu.site"), attemptStore = tab), appModule) }
         try {
             // 로그인 쿠키·자동 로그인이 쓰는 일반 SecureStore는 웹에 여전히 없다(S15P31E102-1264 범위).
             assertNull(app.koin.getOrNull<SecureStore>())

@@ -40,7 +40,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
             <!-- 간편 로그인 복귀 주소(App Links). 카카오만 확정이고 Google·Naver는 같은 형식의 후보다(docs/specs/social-auth.md).
-                 도메인 검증에는 https://k15e102.p.ssafy.io/.well-known/assetlinks.json 에 설치 APK의 SHA-256 지문이 있어야 한다. -->
+                 도메인 검증에는 https://eolssu.site/.well-known/assetlinks.json 에 설치 APK의 SHA-256 지문이 있어야 한다. -->
             <intent-filter android:autoVerify="true">
                 <action android:name="android.intent.action.VIEW" />
 
@@ -48,7 +48,7 @@
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data android:scheme="https" />
-                <data android:host="k15e102.p.ssafy.io" />
+                <data android:host="eolssu.site" />
                 <data android:path="/auth/android/oauth/kakao/callback" />
                 <data android:path="/auth/android/oauth/google/callback" />
                 <data android:path="/auth/android/oauth/naver/callback" />

@@ -25,7 +25,7 @@ class ProxiedRequestSecurityTests {
 
     @Test
     fun `accepts a same site HTTPS request forwarded over HTTP`() {
-        mockMvc.perform(jsonPost(host = "k15e102.p.ssafy.io", origin = "https://k15e102.p.ssafy.io"))
+        mockMvc.perform(jsonPost(host = "eolssu.site", origin = "https://eolssu.site"))
             .andExpect(status().isNotFound)
             .andExpect(jsonPath("$.result.errorCode").value("RESOURCE_NOT_FOUND"))
     }
@@ -48,8 +48,8 @@ class ProxiedRequestSecurityTests {
 
     @Test
     fun `rejects other sites including look-alike hosts`() {
-        for (origin in listOf("https://evil.example", "https://k15e102.p.ssafy.io.evil.example", "https://p.ssafy.io")) {
-            mockMvc.perform(jsonPost(host = "k15e102.p.ssafy.io", origin = origin))
+        for (origin in listOf("https://evil.example", "https://eolssu.site.evil.example", "https://www.eolssu.site")) {
+            mockMvc.perform(jsonPost(host = "eolssu.site", origin = origin))
                 .andExpect(status().isForbidden)
                 .andExpect(jsonPath("$.result.errorCode").value("FORBIDDEN"))
         }
@@ -68,7 +68,7 @@ class ProxiedRequestSecurityTests {
     @Test
     fun `keeps CORS closed without configured development origins`() {
         val response = mockMvc.perform(
-            options("/api/auth/sign-in").behindProxy("k15e102.p.ssafy.io")
+            options("/api/auth/sign-in").behindProxy("eolssu.site")
                 .header("Origin", "https://evil.example")
                 .header("Access-Control-Request-Method", "POST"),
         ).andReturn().response

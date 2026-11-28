@@ -293,7 +293,7 @@ class HttpClientsTest {
         client.post("/api/auth/sign-out") // 서버가 access_token을 Max-Age=0으로 지움
 
         val remaining = SecureCookiesStorage(store) { 0L }
-        assertEquals(listOf("refresh_token"), remaining.get(io.ktor.http.Url("https://k15e102.p.ssafy.io/api/auth/refresh")).map { it.name })
+        assertEquals(listOf("refresh_token"), remaining.get(io.ktor.http.Url("https://eolssu.site/api/auth/refresh")).map { it.name })
 
         cookies.clear()
         assertEquals(emptyMap(), store.values)
