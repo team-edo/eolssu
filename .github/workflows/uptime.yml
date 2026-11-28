@@ -1,0 +1,87 @@
+name: Uptime
+# 운영 서버(iMac, https://eolssu.site)를 밖에서 10분마다 점검하고, 상태가 바뀔 때만 Mattermost로 알린다.
+# edo2의 edo-check-alert(2026-11-30 서버 회수)를 대신한다. 장애가 이어지는 동안은 다시 알리지 않고,
+# 복구되면 한 번 알린다. 상태는 직전 완료 실행의 결과(성공=정상, 실패=장애)로 판단한다.
+on:
+  schedule:
+    - cron: '*/10 * * * *'
+  workflow_dispatch:
+    inputs:
+      test_notice:
+        description: Send a test message to Mattermost
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: uptime
+  cancel-in-progress: false
+
+jobs:
+  check:
+    if: github.repository == 'team-edo/eolssu'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    env:
+      BASE: https://eolssu.site
+      WEBHOOK: ${{ secrets.MATTERMOST_WEBHOOK_URL }}
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - name: Check the service
+        id: probe
+        run: |
+          set -u
+          check() {
+            local name=$1 path=$2 expect=$3 body code
+            for attempt in 1 2 3; do
+              body=$(curl -sS --max-time 15 -w '\n%{http_code}' "$BASE$path" 2>/dev/null || true)
+              code=${body##*$'\n'}
+              if [ "$code" = 200 ] && { [ -z "$expect" ] || printf '%s' "${body%$'\n'*}" | grep -q "$expect"; }; then
+                return 0
+              fi
+              sleep 20
+            done
+            echo "$name(HTTP ${code:-없음})"
+            return 1
+          }
+          failed=""
+          check '웹' / '' || failed="$failed 웹"
+          check 'API 준비 상태' /api/actuator/health/readiness '"UP"' || failed="$failed API"
+          check 'DB 조회' /api/songs '"isSuccess":true' || failed="$failed DB"
+          echo "failed=${failed# }" >> "$GITHUB_OUTPUT"
+      - name: Compare with the previous run
+        id: previous
+        run: |
+          last=$(gh api "repos/$GITHUB_REPOSITORY/actions/workflows/uptime.yml/runs?status=completed&per_page=5" \
+            --jq "[.workflow_runs[] | select(.id != $GITHUB_RUN_ID and .event != \"workflow_dispatch\")][0].conclusion // \"success\"")
+          echo "conclusion=$last" >> "$GITHUB_OUTPUT"
+      - name: Notify Mattermost on change
+        env:
+          FAILED: ${{ steps.probe.outputs.failed }}
+          PREVIOUS: ${{ steps.previous.outputs.conclusion }}
+          TEST: ${{ inputs.test_notice }}
+        run: |
+          now=$(TZ=Asia/Seoul date '+%Y-%m-%d %H:%M KST')
+          run_url="$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
+          text=""
+          if [ "$TEST" = true ]; then
+            text="#### :white_check_mark: 얼쑤 장애 알림 시험 ($now)\n현재 상태: ${FAILED:-정상}\n[점검 실행]($run_url)"
+          elif [ -n "$FAILED" ] && [ "$PREVIOUS" = success ]; then
+            text="#### :rotating_light: 얼쑤 서버 장애 ($now)\n실패: $FAILED\n주소: $BASE\niMac 전원·인터넷·Docker Desktop을 확인하세요. [점검 실행]($run_url)"
+          elif [ -z "$FAILED" ] && [ "$PREVIOUS" = failure ]; then
+            text="#### :white_check_mark: 얼쑤 서버 복구 ($now)\n$BASE 정상 응답. [점검 실행]($run_url)"
+          fi
+          if [ -n "$text" ]; then
+            if [ -z "$WEBHOOK" ]; then echo "MATTERMOST_WEBHOOK_URL is not set"; exit 1; fi
+            payload=$(jq -n --arg t "$(printf '%b' "$text")" '{username: "얼쑤 감시", text: $t}')
+            curl -sS --fail --max-time 15 -H 'Content-Type: application/json' -d "$payload" "$WEBHOOK" >/dev/null
+            echo "notified"
+          fi
+      - name: Record the state
+        if: steps.probe.outputs.failed != ''
+        run: |
+          echo "::error::eolssu.site check failed: ${{ steps.probe.outputs.failed }}"
+          exit 1
